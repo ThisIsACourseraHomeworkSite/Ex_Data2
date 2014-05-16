@@ -1,8 +1,8 @@
-data = readRDS("summarySCC_PM25.rds")
-datasource = readRDS("Source_Classification_Code.rds")
+data = readRDS("C:/Users/KPainter/Desktop/coursera_misc/summarySCC_PM25.rds")
+datasource = readRDS("C:/Users/KPainter/Desktop/coursera_misc/Source_Classification_Code.rds")
 
-balt = datasum[data$fips=="24510",]
-lac = datasum[data$fips=="06037",]
+balt = data[data$fips=="24510",]
+lac = data[data$fips=="06037",]
 
 
 # 1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? 
@@ -10,14 +10,20 @@ lac = datasum[data$fips=="06037",]
 # all sources for each of the years 1999, 2002, 2005, and 2008.
 us_year = aggregate(data$Emissions, list(year = data$year), sum)
 #tapply(data$Emissions, data$year, sum)
-plot(us_year, type = 'l')
+#plot(us_year, type = 'l')
+barplot(us_year$x, us_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "brown", "yellow"), 
+        main="Total United States Emissions", axisnames=TRUE, names.arg = us_year$year)
+
+
 
 # 2. Have total emissions from PM2.5 decreased in the Baltimore City, Maryland 
 # (fips == "24510") from 1999 to 2008? Use the base plotting system to make a plot 
 # answering this question.
 balt_year = aggregate(balt$Emissions, list(year = balt$year), sum)
 #tapply(balt$Emissions, balt$year, sum)
-plot(balt_year, type = 'l')
+#plot(balt_year, type = 'l')
+barplot(balt_year$x, balt_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "brown", "yellow"), 
+        main="Baltimore Emissions", axisnames=TRUE, names.arg = balt_year$year)
 
 # 3. Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) 
 # variable, which of these four sources have seen decreases in emissions from 1999–2008 
