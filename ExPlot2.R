@@ -1,5 +1,7 @@
-data = readRDS("C:/Users/KPainter/Desktop/coursera_misc/summarySCC_PM25.rds")
-datasource = readRDS("C:/Users/KPainter/Desktop/coursera_misc/Source_Classification_Code.rds")
+library(plyr)
+
+data = readRDS("summarySCC_PM25.rds")
+datasource = readRDS("Source_Classification_Code.rds")
 
 balt = data[data$fips=="24510",]
 lac = data[data$fips=="06037",]
@@ -11,7 +13,7 @@ lac = data[data$fips=="06037",]
 us_year = aggregate(data$Emissions, list(year = data$year), sum)
 #tapply(data$Emissions, data$year, sum)
 #plot(us_year, type = 'l')
-barplot(us_year$x, us_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "brown", "yellow"), 
+barplot(us_year$x, us_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
         main="Total United States Emissions", axisnames=TRUE, names.arg = us_year$year)
 
 
@@ -22,7 +24,7 @@ barplot(us_year$x, us_year$year, xlab="Year", ylab = "Emissions", col=c("red", "
 balt_year = aggregate(balt$Emissions, list(year = balt$year), sum)
 #tapply(balt$Emissions, balt$year, sum)
 #plot(balt_year, type = 'l')
-barplot(balt_year$x, balt_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "brown", "yellow"), 
+barplot(balt_year$x, balt_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
         main="Baltimore Emissions", axisnames=TRUE, names.arg = balt_year$year)
 
 # 3. Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) 
@@ -35,18 +37,20 @@ ggplot(balt_point_year) + geom_line(aes(x = year, y = x, colour=type))
 # 4. Across the United States, how have emissions from coal combustion-related sources 
 # changed from 1999–2008?
 datasource_coal = 
-datasource$SCC.Level.Three:  Motor Vehicles: SIC 371
+  datasource$SCC.Level.Three:  Motor Vehicles: SIC 371
 coal_combustion <- datasource[grepl("coal", datasource$Short.Name, ignore.case=TRUE) &
-                 grepl("comb", datasource$EI.Sector, ignore.case=TRUE)  , ]
+                                grepl("comb", datasource$EI.Sector, ignore.case=TRUE)  , ]
 us_coal = join(x = coal_combustion, y = data, by = "SCC")
 us_coal_year = aggregate(us_coal$Emissions, list(year = us_coal$year), sum)
-plot(us_coal_year, type = 'l')
+barplot(us_coal_year$x, us_coal_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
+        main="Total United States Coal Emissions", axisnames=TRUE, names.arg = us_year$year)
 
 # 5. How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
 datasource_onroad = datasource[datasource$Data.Category == "Onroad",]
 balt_mv = join(x = datasource_onroad, y = balt, by="SCC")
 balt_mv_year = aggregate(balt_mv$Emissions, list(year = balt_mv$year), sum)
-plot(balt_mv_year, type = 'l')
+barplot(balt_mv_year$x, balt_mv_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
+        main="Baltimore Motor Vehicle Emissions", axisnames=TRUE, names.arg = balt_year$year)
 
 # 6. Compare emissions from motor vehicle sources in Baltimore City with emissions from
 # motor vehicle sources in Los Angeles County, California (fips == "06037"). Which city
@@ -56,4 +60,8 @@ balt_mv = join(x = datasource_onroad, y = balt, by="SCC")
 balt_mv_year = aggregate(balt_mv$Emissions, list(year = balt_mv$year), sum)
 lac_mv = join(x = datasource_onroad, y = lac, by ="SCC")
 lac_mv_year = aggregate(lac_mv$Emissions, list(year = lac_mv$year), sum)
-plot(lac_mv_year, type = 'l')
+par(mfrow=c(1, 2))
+barplot(balt_mv_year$x, balt_mv_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
+        main="Baltimore Motor Vehicle Emissions", axisnames=TRUE, names.arg = balt_year$year)
+barplot(lac_mv_year$x, lac_mv_year$year, xlab="Year", ylab = "Emissions", col=c("red", "green", "blue", "yellow"), 
+        main="Los Angeles Motor Vehicle Emissions", axisnames=TRUE, names.arg = balt_year$year)
